@@ -3,19 +3,23 @@
 module Main where
 
 import JsonTC
+  ( FromJSON (fromJSON),
+    JSON (..),
+    ToJSON (toJSON),
+  )
 
 main :: IO ()
 main = do
-    print jsonHumans
-    print humans
+  print jsonHumans
+  print humans
 
-
-
-data Human = Man {mName :: String, age :: Int} 
-             | Woman {wName :: String, amountOfKids :: Int} 
-             deriving (ToJSON, FromJSON)
+data Human
+  = Man {mName :: String, age :: Int}
+  | Woman {wName :: String, amountOfKids :: Int}
+  deriving (Show)
 
 instance ToJSON Human where
+  toJSON :: Human -> JSON
   toJSON (Man n a) =
     JsonObject
       [ ("name", JsonString n),
@@ -27,10 +31,6 @@ instance ToJSON Human where
         ("amountOfKids", JsonFloat . fromIntegral $a)
       ]
 
--- {
---  "name" : "Pyotr",
---   "age" : 33
---}
 instance FromJSON Human where
   fromJSON :: JSON -> Maybe Human
   fromJSON (JsonObject [("name", JsonString n), (key, JsonFloat val)]) =
@@ -40,18 +40,10 @@ instance FromJSON Human where
       _ -> Nothing
   fromJSON _ = Nothing
 
-prints = [putStr "hello", putChar 'a', putStrLn "b"]
-
-print' = sequence prints
-
-instance FromJSON a => FromJSON [a] where
-  fromJSON :: JSON ->  Maybe [a]
-  fromJSON (JsonArray xs) =  traverse fromJSON xs
-  fromJSON _ = Nothing
-
 man :: Human
 man = Man "Pyotr" 33
 
+woman :: Human
 woman = Woman "Natasha" 0
 
 jsonHumans :: JSON
