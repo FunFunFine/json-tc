@@ -20,8 +20,10 @@ data JSON
   | JsonBool Bool
   | JsonNull
 
+data DecodingError
+
 class FromJSON a where
-  fromJSON :: JSON -> Maybe a
+  fromJSON :: JSON -> Either DecodingError a
 
 class ToJSON a where
   toJSON :: a -> JSON
