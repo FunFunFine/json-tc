@@ -6,6 +6,7 @@ import JsonTC
   ( FromJSON (fromJSON),
     JSON (..),
     ToJSON (toJSON),
+    DecodingError
   )
 
 main :: IO ()
@@ -32,13 +33,13 @@ instance ToJSON Human where
       ]
 
 instance FromJSON Human where
-  fromJSON :: JSON -> Maybe Human
+  fromJSON :: JSON -> Either DecodingError Human
   fromJSON (JsonObject [("name", JsonString n), (key, JsonFloat val)]) =
     case key of
       "age" -> Just . Man n $ round val
       "amountOfKids" -> Just . Woman n $ round val
-      _ -> Nothing
-  fromJSON _ = Nothing
+      _ -> DecodingError ""
+  fromJSON _ = DecodingError ""
 
 man :: Human
 man = Man "Pyotr" 33

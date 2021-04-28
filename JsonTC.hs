@@ -20,7 +20,7 @@ data JSON
   | JsonBool Bool
   | JsonNull
 
-data DecodingError
+data DecodingError = DecodingError String
 
 class FromJSON a where
   fromJSON :: JSON -> Either DecodingError a
@@ -29,9 +29,9 @@ class ToJSON a where
   toJSON :: a -> JSON
 
 instance FromJSON a => FromJSON [a] where
-  fromJSON :: JSON -> Maybe [a]
+  fromJSON :: JSON -> Either DecodingError [a]
   fromJSON (JsonArray xs) = traverse fromJSON xs
-  fromJSON _ = Nothing
+  fromJSON _ = DecodingError "Invalid: not a list"
 
 instance Show JSON where
   show = prettyPrint' 0
